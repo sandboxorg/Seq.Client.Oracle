@@ -22,3 +22,5 @@ begin
                                     lower_port => &SEQ_PORT,
                                     upper_port => null);
 end;
+
+commit;
