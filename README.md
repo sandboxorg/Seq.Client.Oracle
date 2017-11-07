@@ -2,7 +2,7 @@
 
 Oracle PL/SQL package which sends log entries to a Seq instance via its REST APIs.
 
-## First step - Setup as DBA
+## 1. Setup as DBA
 
 Following instructions are related to [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file.
 
@@ -17,6 +17,6 @@ Specifically, DBA needs to allow remote HTTP calls to Seq instance for a given O
 | SEQ_HOST       |               | Host name (and path, if any) on which Seq is listening to. |
 | SEQ_PORT       | 5341          | Port number on which Seq is listening to.                  |
 
-## Second step - Package deploy
+## 2. Package deploy
 
 Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file.
