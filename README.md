@@ -2,7 +2,7 @@
 
 Oracle PL/SQL package which sends log events to a [Seq](https://getseq.net/) instance via its REST APIs.
 
-This is an unofficial client made by [Finsa S.p.A.](https://www.finsa.it).
+This is an unofficial client made by [Finsa S.p.A.](https://www.finsa.it), publicly provided without any warranty unless explicitly stated within a commercial contract.
 
 ## 1. Setup as DBA
 
