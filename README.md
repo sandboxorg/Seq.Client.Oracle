@@ -6,8 +6,7 @@ Oracle PL/SQL package which sends log entries to a [Seq](https://getseq.net/) in
 
 Following instructions are related to [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file.
 
-Before installing (and customising) Oracle package, some commands need to be run as DBA.
-Specifically, DBA needs to allow remote HTTP calls to Seq instance for a given Oracle user.
+Before installing (and customising) Oracle package, some commands need to be run as DBA. Specifically, DBA needs to allow remote HTTP calls to Seq instance for a given Oracle user.
 
 [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file contains these parameters:
 
@@ -24,3 +23,11 @@ Following instructions are related to [Package.sql](https://github.com/finsaspa/
 ## 3. Add another user (optional)
 
 Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
+
+If more than one Oracle user needs to send log entries, then proper permissions should be added to other users. Specifically, DBA needs to allow remote HTTP calls to Seq instance for other Oracle users, reusing the same security objects defined during setup step.
+
+[AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file contains these parameters:
+
+| Parameter name | Default value | Meaning                                                 |
+| -------------- | ------------- | ------------------------------------------------------- |
+| ORACLE_USER    |               | Other Oracle user who needs to send log entries to Seq. |
