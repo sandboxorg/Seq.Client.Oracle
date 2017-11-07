@@ -16,6 +16,36 @@ Before installing (and customising) Oracle package, some commands need to be run
 | SEQ_HOST       |               | Host name on which Seq is listening to.           |
 | SEQ_PORT       | 5341          | Port number on which Seq is listening to.         |
 
+Before going to step 2, please make sure that there are no networking or security issues blocking HTTP calls from Oracle machine to Seq machine. Using `curl` from Oracle machine, you can easily verify the connectivity with this command (please replace placeholders with proper values):
+
+```shell
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://{SEQ_HOST}:{SEQ_PORT}/api/
+```
+
+Result should be similar to the one described in [this documentation page](https://docs.getseq.net/docs/using-the-http-api):
+
+```js
+{
+  "Product": "Seq .NET Structured Event Server",
+  "Version": "1.0.0.0",
+  "Links": {
+    "ApiKeysResources": "/api/apikeys/resources",
+    "AppInstancesResources": "/api/appinstances\resources",
+    "AppsResources": "/api/apps/resources",
+    "EventsResources": "/api/events/resources",
+    "ExpressionsResources": "/api/expressions/resources",
+    "FeedsResources": "/api/feeds/resources",
+    "LicensesResources": "/api/licenses/resources",
+    "QueriesResources": "/api/queries/resources",
+    "ReportsResources": "/api/reports/resources",
+    "RetentionPoliciesResources": "/api/retentionpolicies/resources",
+    "SettingsResources": "/api/settings/resources",
+    "UsersResources": "/api/users/resources",
+    "ViewsResources": "/api/views/resources"
+  }
+}
+```
+
 ## 2. Package deploy
 
 Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file.
