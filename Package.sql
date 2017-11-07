@@ -1,19 +1,29 @@
 define ORACLE_USER    = '???';            -- Set here the Oracle user for whom package should be created
-define ORACLE_PACKAGE = 'PCK_SEQ_CLIENT'; -- Set here the Oracle package name for Seq client
+define ORACLE_PACKAGE = 'pck_seq_client'; -- Set here the Oracle package name for Seq client - Default is 'pck_seq_client'
 define SEQ_HOST       = '???';            -- Set here the host name on which Seq is listening to
 define SEQ_PORT       = 5341;             -- Set here the port number on which Seq is listening to - Default is 5341
+define SEQ_API_KEY    = '???';            -- Set here the default API KEY which will be used to send log entries to Seq
 
-CREATE PACKAGE &ORACLE_USER.&ORACLE_PACKAGE AS 
-  PROCEDURE find_sal(c_id customers.id%type); 
-END &ORACLE_PACKAGE;
+create package &ORACLE_USER.&ORACLE_PACKAGE as
 
-CREATE OR REPLACE PACKAGE BODY &ORACLE_USER.&ORACLE_PACKAGE AS    
-  PROCEDURE find_sal(c_id customers.id%TYPE) IS 
-    c_sal customers.salary%TYPE; 
-  BEGIN 
-    SELECT salary INTO c_sal 
-      FROM customers 
-     WHERE id = c_id; 
-    dbms_output.put_line('Salary: '|| c_sal); 
-  END find_sal; 
-END &ORACLE_PACKAGE;
+  function seq_base_url return varchar2;
+  
+  function seq_api_key return varchar2;
+
+end &ORACLE_PACKAGE;
+
+create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
+
+  function seq_base_url return varchar2
+  is
+  begin
+    return 'http://&SEQ_HOST:&SEQ_PORT/api/';
+  end seq_base_url;
+  
+  function seq_api_key return varchar2
+  is
+  begin
+    return '&SEQ_API_KEY';
+  end seq_api_key;
+  
+end &ORACLE_PACKAGE;
