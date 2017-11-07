@@ -17,8 +17,8 @@ begin
                                        is_grant  => true,
                                        privilege => 'resolve');
 
-  DBMS_NETWORK_ACL_ADMIN.assign_acl (acl         => 'www.xml',
-                                     host        => '&SEQ_HOST',
-                                     lower_port  => &SEQ_PORT,
-                                     upper_port  => null);
+  DBMS_NETWORK_ACL_ADMIN.assign_acl(acl        => 'www.xml',
+                                    host       => '&SEQ_HOST',
+                                    lower_port => &SEQ_PORT,
+                                    upper_port => null);
 end;
