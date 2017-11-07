@@ -20,6 +20,14 @@ Before installing (and customising) Oracle package, some commands need to be run
 
 Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file.
 
+[Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file contains these parameters:
+
+| Parameter name | Default value | Meaning                                         |
+| -------------- | ------------- | ----------------------------------------------- |
+| ORACLE_USER    |               | Oracle user for whom package should be created. |
+| SEQ_HOST       |               | Host name on which Seq is listening to.         |
+| SEQ_PORT       | 5341          | Port number on which Seq is listening to.       |
+
 ## 3. Add another user (optional)
 
 Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
