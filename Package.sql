@@ -41,7 +41,7 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   function seq_clef_template return varchar2 deterministic
   is
   begin
-    return '{"@t":"[[timestamp]]","@l":"[[level]]","@mt":"[[message_template]]",[[extra_props]]}';
+    return '{"@t":"[[timestamp]]","@l":"[[level]]","@mt":"[[message_template]]"[[extra_props]]}';
   end seq_clef_template;
   
   procedure send_log_event()
@@ -51,6 +51,12 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     log_event varchar2(4000);
     buffer varchar2(4000);
   begin
+    log_event := seq_clef_template();
+    log_event := replace(log_event, '[[timestamp]]', '123');
+    log_event := replace(log_event, '[[level]]', 'Debug');
+    log_event := replace(log_event, '[[message_template]]', 'TEST 123');
+    log_event := replace(log_event, '[[extra_props]]', '');
+  
     request := utl_http.begin_request(seq_raw_events_url(), 'POST',' HTTP/1.1');
     utl_http.set_header(request, 'User-Agent', 'Oracle/PLSQL'); 
     utl_http.set_header(request, 'Content-Type', 'application/json'); 
