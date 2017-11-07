@@ -20,3 +20,7 @@ Specifically, DBA needs to allow remote HTTP calls to Seq instance for a given O
 ## 2. Package deploy
 
 Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file.
+
+## 3. Add another user (optional)
+
+Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
