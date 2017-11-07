@@ -45,9 +45,24 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   end seq_clef_template;
   
   procedure send_log_event()
-  as    
+  is
+    request utl_http.req;
+    response utl_http.resp;
+    log_event varchar2(4000);
+    buffer varchar2(4000);
   begin
-    null;
+    request := utl_http.begin_request(seq_raw_events_url(), 'POST',' HTTP/1.1');
+    utl_http.set_header(request, 'User-Agent', 'Oracle/PLSQL'); 
+    utl_http.set_header(request, 'Content-Type', 'application/json'); 
+    utl_http.set_header(request, 'Content-Length', length(log_event));
+    utl_http.set_header(request, 'Accept', 'application/json');
+  
+    utl_http.write_text(request, log_event);
+    response := utl_http.get_response(request);
+    utl_http.end_response(response);    
+  exception
+    when others then
+      null; -- Do nothing when an error happens.
   end;
   
 end &ORACLE_PACKAGE;
