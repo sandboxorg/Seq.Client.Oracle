@@ -1,6 +1,6 @@
 # Seq.Client.Oracle
 
-Oracle PL/SQL package which sends log entries to a Seq instance via its REST APIs.
+Oracle PL/SQL package which sends log entries to a [Seq](https://getseq.net/) instance via its REST APIs.
 
 ## 1. Setup as DBA
 
