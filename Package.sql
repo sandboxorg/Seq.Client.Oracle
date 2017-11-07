@@ -8,7 +8,11 @@ create package &ORACLE_USER.&ORACLE_PACKAGE as
 
   function seq_base_url return varchar2 deterministic;
   
+  function seq_raw_events_url return varchar2 deterministic;
+  
   function seq_api_key return varchar2 deterministic;
+  
+  function seq_clef_template return varchar2 deterministic;
   
   procedure send_log_event();
 
@@ -22,14 +26,26 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     return 'http://&SEQ_HOST:&SEQ_PORT/api/';
   end seq_base_url;
   
+  function seq_raw_events_url return varchar2 deterministic
+  is
+  begin
+    return seq_base_url || 'events/raw?clef';
+  end seq_raw_events_url;
+  
   function seq_api_key return varchar2 deterministic
   is
   begin
     return '&SEQ_API_KEY';
   end seq_api_key;
   
+  function seq_clef_template return varchar2 deterministic
+  is
+  begin
+    return '{"@t":"[[timestamp]]","@l":"[[level]]","@mt":"[[message_template]]",[[extra_props]]}';
+  end seq_clef_template;
+  
   procedure send_log_event()
-  as
+  as    
   begin
     null;
   end;
