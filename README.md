@@ -22,7 +22,7 @@ Before going to step 2, please make sure that there are no networking or securit
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://{SEQ_HOST}:{SEQ_PORT}/api/
 ```
 
-Result should be similar to the one described in [this documentation page](https://docs.getseq.net/docs/using-the-http-api):
+Result should be similar to the one described in [this Seq documentation page](https://docs.getseq.net/docs/using-the-http-api):
 
 ```js
 {
