@@ -4,10 +4,12 @@ define SEQ_HOST            = '???';     -- Set here the host name on which Seq i
 define SEQ_PORT            = '5341';    -- Set here the port number on which Seq is listening to - Default is 5341
 define SEQ_DEFAULT_API_KEY = '???';     -- Set here the default API KEY which will be used to send log events to Seq
 
-create package &ORACLE_USER.&ORACLE_PACKAGE as
+define DOT = '.'; -- Internal use only.
 
-  type evt_prop is record (name nvarchar2, 
-                           value nvarchar2);
+create package &ORACLE_USER&DOT&ORACLE_PACKAGE as
+
+  type evt_prop is record (name nvarchar2(100), 
+                           value nvarchar2(2000));
                              
   type evt_props is varray(20) of evt_prop;
 
@@ -42,13 +44,16 @@ create package &ORACLE_USER.&ORACLE_PACKAGE as
   procedure send_log_event(api_key in varchar2,
                            log_level in varchar2,
                            message_template in nvarchar2,
-                           event_props in evt_props);
+                           event_props in evt_props,
+                           owner in varchar2,
+                           program_unit in varchar2,
+                           line_number in number);
 
-  procedure self_test();
+  procedure self_test;
 
 end &ORACLE_PACKAGE;
 /
-create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
+create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   function seq_base_url return varchar2 deterministic
   is
@@ -74,32 +79,34 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     return '{"@t":"[[timestamp]]","@l":"[[log_level]]","@mt":"[[message_template]]"[[event_props]]}';
   end seq_clef_template;
   
-  function json_escape(str as nvarchar2(2000))
-  is    
-    -- Start replacing all backslashes, to avoid replacing propers escapes.
-    str = regexp_replace(str, '' || chr(92), '\\');
-    -- Then, continue with other reserved characters.
-    str = regexp_replace(str, '' || chr(10), '\n');
-    str = regexp_replace(str, '' || chr(13), '\r');
-    str = regexp_replace(str, '' || chr(11), '\t');
-    str = regexp_replace(str, '' || chr(34), '\"');
-    return str;
-  end;
-  
-  procedure verbose(message_template as nvarchar2(2000),
-                    event_props as evt_props)
+  function json_escape(str in nvarchar2) return nvarchar2 deterministic
   is
-    owner varchar2;
+    esc nvarchar2(2000);  
+  begin
+    -- Start replacing all backslashes, to avoid replacing propers escapes.
+    esc := regexp_replace(str, '' || chr(92), '\\');
+    -- Then, continue with other reserved characters.
+    esc := regexp_replace(esc, '' || chr(10), '\n');
+    esc := regexp_replace(esc, '' || chr(13), '\r');
+    esc := regexp_replace(esc, '' || chr(11), '\t');
+    esc := regexp_replace(esc, '' || chr(34), '\"');
+    return esc;
+  end json_escape;
+  
+  procedure verbose(message_template in nvarchar2,
+                    event_props in evt_props)
+  is
+    owner varchar2(100);
     program_unit varchar2;
     line_number number;
     caller_type varchar2;
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Verbose', message_template, event_props, owner, program_unit, line_number);
-  end information;
+  end verbose;
   
-  procedure debug(message_template as nvarchar2(2000),
-                  event_props as evt_props)
+  procedure debug(message_template in nvarchar2,
+                  event_props in evt_props)
   is
     owner varchar2;
     program_unit varchar2;
@@ -108,10 +115,10 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Debug', message_template, event_props, program_unit, line_number);
-  end information;
+  end debug;
   
-  procedure information(message_template as nvarchar2(2000),
-                        event_props as evt_props)
+  procedure information(message_template in nvarchar2,
+                        event_props in evt_props)
   is
     owner varchar2;
     program_unit varchar2;
@@ -122,8 +129,8 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     send_log_event(null, 'Information', message_template, event_props, program_unit, line_number);
   end information;
   
-  procedure warning(message_template as nvarchar2(2000),
-                    event_props as evt_props)
+  procedure warning(message_template in nvarchar2,
+                    event_props in evt_props)
   is
     owner varchar2;
     program_unit varchar2;
@@ -132,10 +139,10 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Warning', message_template, event_props, program_unit, line_number);
-  end information;
+  end warning;
   
-  procedure error(message_template as nvarchar2(2000),
-                  event_props as evt_props)
+  procedure error(message_template in nvarchar2,
+                  event_props in evt_props)
   is
     owner varchar2;
     program_unit varchar2;
@@ -144,10 +151,10 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Error', message_template, event_props, program_unit, line_number);
-  end information;
+  end error;
   
-  procedure fatal(message_template as nvarchar2(2000),
-                  event_props as evt_props)
+  procedure fatal(message_template in nvarchar2,
+                  event_props in evt_props)
   is
     owner varchar2;
     program_unit varchar2;
@@ -156,22 +163,22 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Fatal', message_template, event_props, program_unit, line_number);
-  end information;
+  end fatal;
   
-  procedure send_log_event(api_key as varchar2(100),
-                           log_level as varchar2(20),
-                           message_template as nvarchar2(2000),
-                           event_props as evt_props,
-                           owner varchar2,
-                           program_unit varchar2,
-                           line_number number)
+  procedure send_log_event(api_key in varchar2,
+                           log_level in varchar2,
+                           message_template in nvarchar2,
+                           event_props in evt_props,
+                           owner in varchar2,
+                           program_unit in varchar2,
+                           line_number in number)
   is
     request utl_http.req;
     response utl_http.resp;
-    timestamp varchar2(30);
-    event_props_json nvarchar2(2000);
-    log_event nvarchar2(2000);
-    buffer nvarchar2(2000);
+    timestamp varchar2;
+    event_props_json nvarchar2;
+    log_event nvarchar2;
+    buffer nvarchar2;
   begin
     api_key   := coalesce(api_key, seq_default_api_key());
     timestamp := to_char(systimestamp at time zone 'UTC', 'yyyy-mm-dd"T"hh24:mi:ss.ff3"Z"');
@@ -203,6 +210,12 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   exception
     when others then
       null; -- Do nothing when an error happens.
-  end;
+  end send_log_event;
+
+  procedure self_test
+  is
+  begin
+    information('TEST', null);
+  end self_test;
   
 end &ORACLE_PACKAGE;
