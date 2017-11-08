@@ -1,8 +1,8 @@
-define ORACLE_USER         = '???';     -- Set here the Oracle user for whom package should be created
-define ORACLE_PACKAGE      = 'utl_seq'; -- Set here the Oracle package name for Seq client - Default is 'utl_seq'
-define SEQ_HOST            = '???';     -- Set here the host name on which Seq is listening to
-define SEQ_PORT            = 5341;      -- Set here the port number on which Seq is listening to - Default is 5341
-define SEQ_DEFAULT_API_KEY = '???';     -- Set here the default API KEY which will be used to send log events to Seq
+define ORACLE_USER         = '???';         -- Set here the Oracle user for whom package should be created
+define ORACLE_PACKAGE      = 'utl_seq_log'; -- Set here the Oracle package name for Seq client - Default is 'utl_seq'
+define SEQ_HOST            = '???';         -- Set here the host name on which Seq is listening to
+define SEQ_PORT            = 5341;          -- Set here the port number on which Seq is listening to - Default is 5341
+define SEQ_DEFAULT_API_KEY = '???';         -- Set here the default API KEY which will be used to send log events to Seq
 
 create package &ORACLE_USER.&ORACLE_PACKAGE as
 
