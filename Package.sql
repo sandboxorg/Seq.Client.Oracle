@@ -1,13 +1,13 @@
 define ORACLE_USER         = '???';     -- Set here the Oracle user for whom package should be created
 define ORACLE_PACKAGE      = 'seq_log'; -- Set here the Oracle package name for Seq client - Default is 'seq_log'
 define SEQ_HOST            = '???';     -- Set here the host name on which Seq is listening to
-define SEQ_PORT            = 5341;      -- Set here the port number on which Seq is listening to - Default is 5341
+define SEQ_PORT            = '5341';    -- Set here the port number on which Seq is listening to - Default is 5341
 define SEQ_DEFAULT_API_KEY = '???';     -- Set here the default API KEY which will be used to send log events to Seq
 
 create package &ORACLE_USER.&ORACLE_PACKAGE as
 
-  type evt_prop is record (name nvarchar2(100), 
-                           value nvarchar2(2000));
+  type evt_prop is record (name nvarchar2, 
+                           value nvarchar2);
                              
   type evt_props is varray(20) of evt_prop;
 
@@ -19,35 +19,35 @@ create package &ORACLE_USER.&ORACLE_PACKAGE as
   
   function seq_clef_template return varchar2 deterministic;
 
-  function json_escape(str as nvarchar2(2000)) deterministic;
+  function json_escape(str in nvarchar2) return nvarchar2 deterministic;
 
-  procedure verbose(message_template as nvarchar2(2000),
-                    event_props as evt_props);
+  procedure verbose(message_template in nvarchar2,
+                    event_props in evt_props);
 
-  procedure debug(message_template as nvarchar2(2000),
-                  event_props as evt_props);
+  procedure debug(message_template in nvarchar2,
+                  event_props in evt_props);
   
-  procedure information(message_template as nvarchar2(2000),
-                        event_props as evt_props);
+  procedure information(message_template in nvarchar2,
+                        event_props in evt_props);
 
-  procedure warning(message_template as nvarchar2(2000),
-                    event_props as evt_props);
+  procedure warning(message_template in nvarchar2,
+                    event_props in evt_props);
 
-  procedure error(message_template as nvarchar2(2000),
-                  event_props as evt_props);
+  procedure error(message_template in nvarchar2,
+                  event_props in evt_props);
 
-  procedure fatal(message_template as nvarchar2(2000),
-                  event_props as evt_props);
+  procedure fatal(message_template in nvarchar2,
+                  event_props in evt_props);
   
-  procedure send_log_event(api_key as varchar2(100),
-                           log_level as varchar2(20),
-                           message_template as nvarchar2(2000),
-                           event_props as evt_props);
+  procedure send_log_event(api_key in varchar2,
+                           log_level in varchar2,
+                           message_template in nvarchar2,
+                           event_props in evt_props);
 
   procedure self_test();
 
 end &ORACLE_PACKAGE;
-
+/
 create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
 
   function seq_base_url return varchar2 deterministic
