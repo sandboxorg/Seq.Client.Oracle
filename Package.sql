@@ -77,7 +77,7 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     api_key   := coalesce(api_key, seq_default_api_key());
     timestamp := to_char(systimestamp at time zone 'UTC', 'yyyy-mm-dd"T"hh24:mi:ss.ff3"Z"');
     
-    select listagg(',"' || x.key || '":"' || x.value || '"') within group (order by x.key)
+    select listagg(',"' || json_escape(x.key) || '":"' || json_escape(x.value) || '"') within group (order by x.key)
       into event_props_json x
       from table(event_props);
   
@@ -109,6 +109,7 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     -- Then, continue with other reserved characters.
     str = regexp_replace(str, '' || chr(10), '\n');
     str = regexp_replace(str, '' || chr(13), '\r');
+    str = regexp_replace(str, '' || chr(11), '\t');
     str = regexp_replace(str, '' || chr(34), '\"');
     return str;
   end;
