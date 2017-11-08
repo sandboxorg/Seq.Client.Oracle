@@ -57,7 +57,7 @@ Following instructions are related to [Package.sql](https://github.com/finsaspa/
 | Parameter name      | Default value | Meaning                                                           |
 | ------------------- | ------------- | ----------------------------------------------------------------- |
 | ORACLE_USER         |               | Oracle user for whom package should be created.                   |
-| ORACLE_PACKAGE      | utl_seq_log   | Oracle package name for Seq client.                               |
+| ORACLE_PACKAGE      | seq_log       | Oracle package name for Seq client.                               |
 | SEQ_HOST            |               | Host name on which Seq is listening to.                           |
 | SEQ_PORT            | 5341          | Port number on which Seq is listening to.                         |
 | SEQ_DEFAULT_API_KEY |               | **Default** API KEY which will be used to send log events to Seq. |
