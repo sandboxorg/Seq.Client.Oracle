@@ -25,6 +25,8 @@ create package &ORACLE_USER.&ORACLE_PACKAGE as
                            log_level as varchar2(20),
                            message_template as nvarchar2(2000),
                            event_props as evt_props);
+                           
+  function json_escape(str as nvarchar2(2000));
 
 end &ORACLE_PACKAGE;
 
@@ -68,20 +70,25 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
     request utl_http.req;
     response utl_http.resp;
     timestamp varchar2(30);
+    event_props_json nvarchar2(2000);
     log_event nvarchar2(2000);
     buffer nvarchar2(2000);
   begin
     api_key   := coalesce(api_key, seq_default_api_key());
     timestamp := to_char(systimestamp at time zone 'UTC', 'yyyy-mm-dd"T"hh24:mi:ss.ff3"Z"');
+    
+    select listagg(',"' || x.key || '":"' || x.value || '"') within group (order by x.key)
+      into event_props_json x
+      from table(event_props);
   
     log_event := seq_clef_template();
     log_event := replace(log_event, '[[timestamp]]', timestamp);
     log_event := replace(log_event, '[[level]]', log_level);
     log_event := replace(log_event, '[[message_template]]', message_template);
-    log_event := replace(log_event, '[[extra_props]]', '');
+    log_event := replace(log_event, '[[event_props]]', event_props_json);
   
     request := utl_http.begin_request(seq_raw_events_url(), 'POST',' HTTP/1.1');
-    utl_http.set_header(request, 'User-Agent', 'Oracle/PLSQL'); 
+    utl_http.set_header(request, 'User-Agent', 'Seq client for Oracle/PLSQL'); 
     utl_http.set_header(request, 'Content-Type', 'application/json'); 
     utl_http.set_header(request, 'Content-Length', length(log_event));
     utl_http.set_header(request, 'Accept', 'application/json');
@@ -93,6 +100,17 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   exception
     when others then
       null; -- Do nothing when an error happens.
+  end;
+  
+  function json_escape(str as nvarchar2(2000))
+  is    
+    -- Start replacing all backslashes, to avoid replacing propers escapes.
+    str = regexp_replace(str, '' || chr(92), '\\');
+    -- Then, continue with other reserved characters.
+    str = regexp_replace(str, '' || chr(10), '\n');
+    str = regexp_replace(str, '' || chr(13), '\r');
+    str = regexp_replace(str, '' || chr(34), '\"');
+    return str;
   end;
   
 end &ORACLE_PACKAGE;
