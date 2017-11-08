@@ -6,6 +6,11 @@ define SEQ_DEFAULT_API_KEY = '???';     -- Set here the default API KEY which wi
 
 create package &ORACLE_USER.&ORACLE_PACKAGE as
 
+  type event_prop is record (name nvarchar2(100), 
+                             value nvarchar2(2000));
+                             
+  type event_props is varray(20) of event_prop;
+
   function seq_base_url return varchar2 deterministic;
   
   function seq_raw_events_url return varchar2 deterministic;
@@ -13,6 +18,8 @@ create package &ORACLE_USER.&ORACLE_PACKAGE as
   function seq_default_api_key return varchar2 deterministic;
   
   function seq_clef_template return varchar2 deterministic;
+  
+  procedure information(message_template as nvarchar2(2000));
   
   procedure send_log_event(api_key as varchar2(100),
                            log_level as varchar2(20),
@@ -45,6 +52,12 @@ create or replace package body &ORACLE_USER.&ORACLE_PACKAGE as
   begin
     return '{"@t":"[[timestamp]]","@l":"[[level]]","@mt":"[[message_template]]"[[extra_props]]}';
   end seq_clef_template;
+  
+  procedure information(message_template as nvarchar2(2000))
+  is
+  begin
+    send_log_event(null, 'Information', message_template);
+  end information;
   
   procedure send_log_event(api_key as varchar2(100),
                            log_level as varchar2(20),
