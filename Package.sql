@@ -181,14 +181,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     buffer varchar2(32767);
   begin
     timestamp := to_char(systimestamp at time zone 'UTC', 'yyyy-mm-dd"T"hh24:mi:ss.ff3"Z"');
-    
-    select listagg(',' || escape_json(x.name) || ':' || escape_json(x.value)) within group (order by x.name)
-      into event_props_json
-      from (select name, value from table(coalesce(event_props, evt_props()))
-             union all
-            select 'SourceContext' name, (lower(owner) || '.' || lower(program_unit)) value from dual
-             union all
-            select 'LineNumber' name, to_char(line_number) value from dual) x;
+
+    event_props_json := ',' || escape_json('SourceContext') || ':' || escape_json(lower(owner) || '.' || lower(program_unit));
+    event_props_json := event_props_json || ',' || escape_json('LineNumber') || ':' || escape_json(to_char(line_number));
+
+    if event_props is not null and event_props.count > 0 
+    then
+        for evp in 1 .. event_props.count 
+        loop
+          event_props_json := event_props_json || ',' || escape_json(event_props(evp).name) || ':' || escape_json(event_props(evp).value);
+        end loop; 
+    end if;
   
     log_event := clef_template;
     log_event := replace(log_event, '[[timestamp]]', timestamp);
