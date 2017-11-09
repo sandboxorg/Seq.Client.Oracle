@@ -24,26 +24,17 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET
 
 Result should be similar to the one described in [this Seq documentation page](https://docs.getseq.net/docs/using-the-http-api):
 
-```js
-{
-  "Product": "Seq .NET Structured Event Server",
-  "Version": "1.0.0.0",
-  "Links": {
-    "ApiKeysResources": "/api/apikeys/resources",
-    "AppInstancesResources": "/api/appinstances\resources",
-    "AppsResources": "/api/apps/resources",
-    "EventsResources": "/api/events/resources",
-    "ExpressionsResources": "/api/expressions/resources",
-    "FeedsResources": "/api/feeds/resources",
-    "LicensesResources": "/api/licenses/resources",
-    "QueriesResources": "/api/queries/resources",
-    "ReportsResources": "/api/reports/resources",
-    "RetentionPoliciesResources": "/api/retentionpolicies/resources",
-    "SettingsResources": "/api/settings/resources",
-    "UsersResources": "/api/users/resources",
-    "ViewsResources": "/api/views/resources"
-  }
-}
+```
+HTTP/1.1 200 OK
+Cache-Control: no-cache
+Pragma: no-cache
+Transfer-Encoding: chunked
+Content-Type: application/json; charset=utf-8
+Expires: Wed, 08 Nov 2017 14:07:40 GMT
+Server: Microsoft-HTTPAPI/2.0
+Date: Thu, 09 Nov 2017 14:07:40 GMT
+
+{"Product":"Seq — structured logs for .NET apps","Version":"4.1.14.0","InstanceName":null,"Links":{"ApiKeysResources":"api/apikeys/resources","AppInstancesResources":"api/appinstances/resources","AppsResources":"api/apps/resources","BackupsResources":"api/backups/resources","DashboardsResources":"api/dashboards/resources","DataResources":"api/data/resources","DiagnosticsResources":"api/diagnostics/resources","EventsResources":"api/events/resources","ExpressionsResources":"api/expressions/resources","FeedsResources":"api/feeds/resources","LicensesResources":"api/licenses/resources","PermalinksResources":"api/permalinks/resources","RetentionPoliciesResources":"api/retentionpolicies/resources","SettingsResources":"api/settings/resources","SignalsResources":"api/signals/resources","SqlQueriesResources":"api/sqlqueries/resources","UpdatesResources":"api/updates/resources","UsersResources":"api/users/resources"}}
 ```
 
 ## 2. Package deploy
