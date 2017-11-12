@@ -23,20 +23,32 @@ create or replace package &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   function escape_json(str in varchar2) return varchar2 deterministic;
 
+  procedure verbose(message in varchar2);
+
   procedure verbose(message_template in varchar2,
                     event_props in evt_props);
 
+  procedure debug(message in varchar2);
+
   procedure debug(message_template in varchar2,
                   event_props in evt_props);
+
+  procedure information(message in varchar2);
   
   procedure information(message_template in varchar2,
                         event_props in evt_props);
 
+  procedure warning(message in varchar2);
+
   procedure warning(message_template in varchar2,
                     event_props in evt_props);
 
+  procedure error(message in varchar2);
+
   procedure error(message_template in varchar2,
                   event_props in evt_props);
+
+  procedure fatal(message in varchar2);
 
   procedure fatal(message_template in varchar2,
                   event_props in evt_props);
@@ -76,7 +88,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   function clef_template return varchar2 deterministic
   is
   begin
-    return '{"@t":"[[timestamp]]","@l":"[[log_level]]","@mt":"[[message_template]]"[[event_props]]}';
+    return '{"@t":"[[timestamp]]","@l":"[[log_level]]","[[message_type]]":"[[message_template]]"[[event_props]]}';
   end clef_template;
   
   function escape_json(str in varchar2) return varchar2 deterministic
@@ -93,6 +105,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     return '"' || esc || '"';
   end escape_json;
   
+  procedure verbose(message in varchar2)
+  is
+    owner varchar2(100);
+    program_unit varchar2(100);
+    line_number number(10);
+    caller_type varchar2(100);
+  begin
+    owa_util.who_called_me(owner, program_unit, line_number, caller_type);
+    send_log_event(null, 'Verbose', message, null, owner, program_unit, line_number);
+  end verbose;
+
   procedure verbose(message_template in varchar2,
                     event_props in evt_props)
   is
@@ -104,6 +127,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Verbose', message_template, event_props, owner, program_unit, line_number);
   end verbose;
+  
+  procedure debug(message in varchar2)
+  is
+    owner varchar2(100);
+    program_unit varchar2(100);
+    line_number number(10);
+    caller_type varchar2(100);
+  begin
+    owa_util.who_called_me(owner, program_unit, line_number, caller_type);
+    send_log_event(null, 'Debug', message, null, owner, program_unit, line_number);
+  end debug;
 
   procedure debug(message_template in varchar2,
                   event_props in evt_props)
@@ -116,6 +150,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Debug', message_template, event_props, owner, program_unit, line_number);
   end debug;
+  
+  procedure information(message in varchar2)
+  is
+    owner varchar2(100);
+    program_unit varchar2(100);
+    line_number number(10);
+    caller_type varchar2(100);
+  begin
+    owa_util.who_called_me(owner, program_unit, line_number, caller_type);
+    send_log_event(null, 'Information', message, null, owner, program_unit, line_number);
+  end information;
 
   procedure information(message_template in varchar2,
                         event_props in evt_props)
@@ -128,6 +173,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Information', message_template, event_props, owner, program_unit, line_number);
   end information;
+  
+  procedure warning(message in varchar2)
+  is
+    owner varchar2(100);
+    program_unit varchar2(100);
+    line_number number(10);
+    caller_type varchar2(100);
+  begin
+    owa_util.who_called_me(owner, program_unit, line_number, caller_type);
+    send_log_event(null, 'Warning', message, null, owner, program_unit, line_number);
+  end warning;
 
   procedure warning(message_template in varchar2,
                     event_props in evt_props)
@@ -140,6 +196,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Warning', message_template, event_props, owner, program_unit, line_number);
   end warning;
+  
+  procedure error(message in varchar2)
+  is
+    owner varchar2(100);
+    program_unit varchar2(100);
+    line_number number(10);
+    caller_type varchar2(100);
+  begin
+    owa_util.who_called_me(owner, program_unit, line_number, caller_type);
+    send_log_event(null, 'Error', message, null, owner, program_unit, line_number);
+  end error;
 
   procedure error(message_template in varchar2,
                   event_props in evt_props)
@@ -152,6 +219,17 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
     send_log_event(null, 'Error', message_template, event_props, owner, program_unit, line_number);
   end error;
+  
+  procedure fatal(message in varchar2)
+  is
+    owner varchar2(100);
+    program_unit varchar2(100);
+    line_number number(10);
+    caller_type varchar2(100);
+  begin
+    owa_util.who_called_me(owner, program_unit, line_number, caller_type);
+    send_log_event(null, 'Fatal', message, null, owner, program_unit, line_number);
+  end fatal;
 
   procedure fatal(message_template in varchar2,
                   event_props in evt_props)
@@ -176,6 +254,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     request utl_http.req;
     response utl_http.resp;
     timestamp varchar2(100);
+    message_type varchar(3);
     event_props_json varchar2(32767);
     log_event varchar2(32767);
     buffer varchar2(32767);
@@ -187,15 +266,19 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
     if event_props is not null and event_props.count > 0 
     then
+        message_type := '@mt';
         for evp in 1 .. event_props.count 
         loop
           event_props_json := event_props_json || ',' || escape_json(event_props(evp).name) || ':' || escape_json(event_props(evp).value);
-        end loop; 
+        end loop;
+    else
+        message_type := '@m';
     end if;
   
     log_event := clef_template;
     log_event := replace(log_event, '[[timestamp]]', timestamp);
     log_event := replace(log_event, '[[log_level]]', log_level);
+    log_event := replace(log_event, '[[message_type]]', message_type);
     log_event := replace(log_event, '[[message_template]]', message_template);
     log_event := replace(log_event, '[[event_props]]', event_props_json);
   
@@ -227,8 +310,41 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   procedure self_test
   is
+    test_log_level evt_prop;
+    test_number evt_prop;
   begin
-    information('TEST', null);
+    test_log_level.name := 'TestLogLevel';
+    test_number.name := 'TestNumber';
+  
+    test_log_level.value := 'VERBOSE';
+    test_number.value := '1';
+    verbose('Verbose test message from Seq client for Oracle');
+    verbose('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
+
+    test_log_level.value := 'DEBUG';
+    test_number.value := '2';
+    debug('Debug test message from Seq client for Oracle');
+    debug('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
+
+    test_log_level.value := 'INFORMATION';
+    test_number.value := '3';
+    information('Information test message from Seq client for Oracle');
+    information('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
+
+    test_log_level.value := 'WARNING';
+    test_number.value := '4';
+    warning('Warning test message from Seq client for Oracle');
+    warning('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
+
+    test_log_level.value := 'ERROR';
+    test_number.value := '5';
+    error('Error test message from Seq client for Oracle');
+    error('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
+
+    test_log_level.value := 'FATAL';
+    test_number.value := '6';
+    fatal('Fatal test message from Seq client for Oracle');
+    fatal('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
   end self_test;
   
 end &ORACLE_PACKAGE;
