@@ -51,6 +51,14 @@ Following instructions are related to [Package.sql](https://github.com/finsaspa/
 | SEQ_PORT            | 5341          | Port number on which Seq is listening to.                         |
 | SEQ_DEFAULT_API_KEY |               | **Default** API KEY which will be used to send log events to Seq. |
 
+After having installed that package, you can test that everything is working properly by running this command (please replace placeholders with proper values):
+
+```sql
+begin
+  {ORACLE_USER}.{ORACLE_PACKAGE}.self_test();
+end;
+```
+
 ## 3. Add another user (optional)
 
 Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
