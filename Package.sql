@@ -23,6 +23,8 @@ create or replace package &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   function escape_json(str in varchar2) return varchar2 deterministic;
 
+  procedure set_api_key(api_key in varchar2);
+
   procedure verbose(message in varchar2);
 
   procedure verbose(message_template in varchar2,
@@ -67,6 +69,8 @@ end &ORACLE_PACKAGE;
 /
 create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
+  custom_api_key varchar2(100);
+
   function base_url return varchar2 deterministic
   is
   begin
@@ -104,6 +108,12 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     esc := regexp_replace(esc, '' || chr(34), '\"');
     return '"' || esc || '"';
   end escape_json;
+
+  procedure set_api_key(api_key in varchar2)
+  is
+  begin
+    custom_api_key := api_key;
+  end set_api_key;
   
   procedure verbose(message in varchar2)
   is
@@ -113,7 +123,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Verbose', message, null, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Verbose', message, null, owner, program_unit, line_number);
   end verbose;
 
   procedure verbose(message_template in varchar2,
@@ -125,7 +135,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Verbose', message_template, event_props, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Verbose', message_template, event_props, owner, program_unit, line_number);
   end verbose;
   
   procedure debug(message in varchar2)
@@ -136,7 +146,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Debug', message, null, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Debug', message, null, owner, program_unit, line_number);
   end debug;
 
   procedure debug(message_template in varchar2,
@@ -148,7 +158,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Debug', message_template, event_props, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Debug', message_template, event_props, owner, program_unit, line_number);
   end debug;
   
   procedure information(message in varchar2)
@@ -159,7 +169,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Information', message, null, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Information', message, null, owner, program_unit, line_number);
   end information;
 
   procedure information(message_template in varchar2,
@@ -171,7 +181,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Information', message_template, event_props, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Information', message_template, event_props, owner, program_unit, line_number);
   end information;
   
   procedure warning(message in varchar2)
@@ -182,7 +192,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Warning', message, null, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Warning', message, null, owner, program_unit, line_number);
   end warning;
 
   procedure warning(message_template in varchar2,
@@ -194,7 +204,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Warning', message_template, event_props, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Warning', message_template, event_props, owner, program_unit, line_number);
   end warning;
   
   procedure error(message in varchar2)
@@ -205,7 +215,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Error', message, null, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Error', message, null, owner, program_unit, line_number);
   end error;
 
   procedure error(message_template in varchar2,
@@ -217,7 +227,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Error', message_template, event_props, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Error', message_template, event_props, owner, program_unit, line_number);
   end error;
   
   procedure fatal(message in varchar2)
@@ -228,7 +238,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Fatal', message, null, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Fatal', message, null, owner, program_unit, line_number);
   end fatal;
 
   procedure fatal(message_template in varchar2,
@@ -240,7 +250,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     caller_type varchar2(100);
   begin
     owa_util.who_called_me(owner, program_unit, line_number, caller_type);
-    send_log_event(null, 'Fatal', message_template, event_props, owner, program_unit, line_number);
+    send_log_event(custom_api_key, 'Fatal', message_template, event_props, owner, program_unit, line_number);
   end fatal;
   
   procedure send_log_event(api_key in varchar2,
