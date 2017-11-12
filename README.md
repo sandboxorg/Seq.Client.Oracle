@@ -16,9 +16,9 @@ Before installing (and customising) Oracle package, some commands need to be run
 
 | Parameter name | Default value | Meaning                                          |
 | -------------- | ------------- | ------------------------------------------------ |
-| ORACLE_USER    |               | Oracle user who needs to send log events to Seq. |
-| SEQ_HOST       |               | Host name on which Seq is listening to.          |
-| SEQ_PORT       | 5341          | Port number on which Seq is listening to.        |
+| `ORACLE_USER`  |               | Oracle user who needs to send log events to Seq. |
+| `SEQ_HOST`     |               | Host name on which Seq is listening to.          |
+| `SEQ_PORT`     | 5341          | Port number on which Seq is listening to.        |
 
 Before going to step 2, please make sure that there are no networking or security issues blocking HTTP calls from Oracle machine to Seq machine. Using `curl` from Oracle machine, you can easily verify the connectivity with this command (please replace placeholders with proper values):
 
@@ -47,13 +47,13 @@ Following instructions are related to [Package.sql](https://github.com/finsaspa/
 
 [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file contains these parameters:
 
-| Parameter name      | Default value | Meaning                                                           |
-| ------------------- | ------------- | ----------------------------------------------------------------- |
-| ORACLE_USER         |               | Oracle user for whom package should be created.                   |
-| ORACLE_PACKAGE      | seq_log       | Oracle package name for Seq client.                               |
-| SEQ_HOST            |               | Host name on which Seq is listening to.                           |
-| SEQ_PORT            | 5341          | Port number on which Seq is listening to.                         |
-| SEQ_DEFAULT_API_KEY |               | **Default** API KEY which will be used to send log events to Seq. |
+| Parameter name        | Default value | Meaning                                                           |
+| --------------------- | ------------- | ----------------------------------------------------------------- |
+| `ORACLE_USER`         |               | Oracle user for whom package should be created.                   |
+| `ORACLE_PACKAGE`      | seq_log       | Oracle package name for Seq client.                               |
+| `SEQ_HOST`            |               | Host name on which Seq is listening to.                           |
+| `SEQ_PORT`            | 5341          | Port number on which Seq is listening to.                         |
+| `SEQ_DEFAULT_API_KEY` |               | **Default** API KEY which will be used to send log events to Seq. |
 
 After having installed that package, you can test that everything is working properly by running this command (please replace placeholders with proper values):
 
@@ -65,6 +65,15 @@ end;
 
 If test runs OK, then you should find two messages per log level inside your Seq instance, all related to the API KEY specified during package installation; one message is simple, while the other one uses event properties.
 
+Events sent through Oracle package will use API KEY specified in `SEQ_DEFAULT_API_KEY` parameter. If some events should use a different API KEY, following procedure can be used (please replace placeholders with proper values):
+
+```sql
+begin
+  {ORACLE_USER}.{ORACLE_PACKAGE}.set_api_key('{NEW_API_KEY}');
+  -- Use log procedures here...
+end;
+```
+
 ### 3. Add another user (optional)
 
 Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
@@ -75,7 +84,7 @@ If more than one Oracle user needs to send log events, then proper permissions s
 
 | Parameter name | Default value | Meaning                                                |
 | -------------- | ------------- | ------------------------------------------------------ |
-| ORACLE_USER    |               | Other Oracle user who needs to send log events to Seq. |
+| `ORACLE_USER`  |               | Other Oracle user who needs to send log events to Seq. |
 
 ## About this repository and its maintainer
 
