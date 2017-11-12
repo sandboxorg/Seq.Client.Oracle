@@ -1,8 +1,12 @@
 # Seq.Client.Oracle
 
-Oracle PL/SQL package which sends log events to a [Seq](https://getseq.net/) instance via its REST APIs.
+*Oracle PL/SQL package which sends log events to a [Seq](https://getseq.net/) instance via its REST APIs.*
 
-## 1. Setup as DBA
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ELJWKEYS9QGKA)
+
+## How to use this
+
+### 1. Setup as DBA
 
 Following instructions are related to [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file.
 
@@ -37,7 +41,7 @@ Date: Thu, 09 Nov 2017 14:07:40 GMT
 {"Product":"Seq — structured logs for .NET apps","Version":"4.1.14.0","InstanceName":null,"Links":{"ApiKeysResources":"api/apikeys/resources","AppInstancesResources":"api/appinstances/resources","AppsResources":"api/apps/resources","BackupsResources":"api/backups/resources","DashboardsResources":"api/dashboards/resources","DataResources":"api/data/resources","DiagnosticsResources":"api/diagnostics/resources","EventsResources":"api/events/resources","ExpressionsResources":"api/expressions/resources","FeedsResources":"api/feeds/resources","LicensesResources":"api/licenses/resources","PermalinksResources":"api/permalinks/resources","RetentionPoliciesResources":"api/retentionpolicies/resources","SettingsResources":"api/settings/resources","SignalsResources":"api/signals/resources","SqlQueriesResources":"api/sqlqueries/resources","UpdatesResources":"api/updates/resources","UsersResources":"api/users/resources"}}
 ```
 
-## 2. Package deploy
+### 2. Package deploy
 
 Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file.
 
@@ -59,7 +63,7 @@ begin
 end;
 ```
 
-## 3. Add another user (optional)
+### 3. Add another user (optional)
 
 Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
 
@@ -70,3 +74,13 @@ If more than one Oracle user needs to send log events, then proper permissions s
 | Parameter name | Default value | Meaning                                                |
 | -------------- | ------------- | ------------------------------------------------------ |
 | ORACLE_USER    |               | Other Oracle user who needs to send log events to Seq. |
+
+## About this repository and its maintainer
+
+Everything done on this repository is freely offered on the terms of the project license. You are free to do everything you want with the code and its related files, as long as you respect the license and use common sense while doing it :-)
+
+I maintain this project during my spare time, so I can offer limited assistance and I can offer **no kind of warranty**.
+
+However, if this project helps you, then you might offer me an hot cup of coffee:
+
+[![Donate](http://pomma89.altervista.org/buy-me-a-coffee.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ELJWKEYS9QGKA)
