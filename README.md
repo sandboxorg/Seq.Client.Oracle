@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ELJWKEYS9QGKA)
 
-## How to use this
+## How to install
 
 ### 1. Setup as DBA
 
@@ -62,6 +62,8 @@ begin
   {ORACLE_USER}.{ORACLE_PACKAGE}.self_test();
 end;
 ```
+
+If test runs OK, then you should find two messages per log level inside your Seq instance, all related to the API KEY specified during package installation; one message is simple, while the other one uses event properties.
 
 ### 3. Add another user (optional)
 
