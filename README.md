@@ -6,11 +6,11 @@
 
 ## How to install
 
-### 1. Setup as DBA
+### 1. Setup (as `SYS`)
 
 Following instructions are related to [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file.
 
-Before installing (and customising) Oracle package, some commands need to be run as DBA. Specifically, DBA needs to allow remote HTTP calls to Seq instance for a given Oracle user.
+Before installing (and customising) Oracle package, some commands need to be run as `SYS`. Specifically, `SYS` needs to allow remote HTTP calls to Seq instance for a given Oracle user.
 
 [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file contains these parameters:
 
@@ -19,6 +19,8 @@ Before installing (and customising) Oracle package, some commands need to be run
 | `ORACLE_USER`  |               | Oracle user who needs to send log events to Seq. |
 | `SEQ_HOST`     |               | Host name on which Seq is listening to.          |
 | `SEQ_PORT`     | 5341          | Port number on which Seq is listening to.        |
+
+`ORACLE_USER` can be set to `SYS` if you want to share package globally. If so, please remove grants at the beginning of the script and do not skip step 3, which must also be run as `SYS` user.
 
 Before going to step 2, please make sure that there are no networking or security issues blocking HTTP calls from Oracle machine to Seq machine. Using `curl` from Oracle machine, you can easily verify the connectivity with this command (please replace placeholders with proper values):
 
@@ -55,6 +57,8 @@ Following instructions are related to [Package.sql](https://github.com/finsaspa/
 | `SEQ_PORT`            | 5341          | Port number on which Seq is listening to.                         |
 | `SEQ_DEFAULT_API_KEY` |               | **Default** API KEY which will be used to send log events to Seq. |
 
+`ORACLE_USER` can be set to `SYS` if you want to share package globally. If so, do not skip step 3, which must also be run as `SYS` user.
+
 After having installed that package, you can test that everything is working properly by running this command (please replace placeholders with proper values):
 
 ```sql
@@ -74,17 +78,18 @@ begin
 end;
 ```
 
-### 3. Add another user (optional)
+### 3. Public synonym (as `SYS`, optional)
 
-Following instructions are related to [AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file.
+Following instructions are related to [Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Synonym.sql) file.
 
-If more than one Oracle user needs to send log events, then proper permissions should be added to other users. Specifically, DBA needs to allow remote HTTP calls to Seq instance for other Oracle users, reusing the same security objects defined during setup step.
+If you installed Oracle package as `SYS`, then you might want to create a public synonym so that consumers can use it as if it was a system package, without specifying user prefix on each call. This step basically creates a synonym and adds execute grant to a chosen user (not `SYS`, of course).
 
-[AddUser.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/AddUser.sql) file contains these parameters:
+[Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Synonym.sql) file contains these parameters:
 
-| Parameter name | Default value | Meaning                                                |
-| -------------- | ------------- | ------------------------------------------------------ |
-| `ORACLE_USER`  |               | Other Oracle user who needs to send log events to Seq. |
+| Parameter name   | Default value | Meaning                                                 |
+| ---------------- | ------------- | ------------------------------------------------------- |
+| `ORACLE_USER`    |               | Oracle user, not SYS, from whom package should be used. |
+| `ORACLE_PACKAGE` | seq_log       | Oracle package name for Seq client.                     |
 
 ## About this repository and its maintainer
 
