@@ -13,6 +13,8 @@ create or replace package &ORACLE_USER&DOT&ORACLE_PACKAGE as
                              
   type evt_props is varray(20) of evt_prop;
 
+  function version return varchar2 deterministic;
+
   function base_url return varchar2 deterministic;
   
   function raw_events_url return varchar2 deterministic;
@@ -70,6 +72,12 @@ end &ORACLE_PACKAGE;
 create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   custom_api_key varchar2(100);
+
+  function version return varchar2 deterministic
+  is
+  begin
+    return '1.0.0';
+  end version;
 
   function base_url return varchar2 deterministic
   is
