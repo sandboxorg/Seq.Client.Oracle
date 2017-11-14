@@ -368,3 +368,4 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   end self_test;
   
 end &ORACLE_PACKAGE;
+/
