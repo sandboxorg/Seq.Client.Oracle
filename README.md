@@ -8,11 +8,11 @@
 
 ### 1. Setup (as `SYS`)
 
-Following instructions are related to [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file.
+Following instructions are related to [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Setup.sql) file.
 
 Before installing (and customising) Oracle package, some commands need to be run as `SYS`. Specifically, `SYS` needs to allow remote HTTP calls to Seq instance for a given Oracle user.
 
-[Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Setup.sql) file contains these parameters:
+[Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Setup.sql) file contains these parameters:
 
 | Parameter name | Default value | Meaning                                          |
 | -------------- | ------------- | ------------------------------------------------ |
@@ -45,9 +45,9 @@ Date: Thu, 09 Nov 2017 14:07:40 GMT
 
 ### 2. Package deploy
 
-Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file.
+Following instructions are related to [Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Package.sql) file.
 
-[Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Package.sql) file contains these parameters:
+[Package.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Package.sql) file contains these parameters:
 
 | Parameter name        | Default value | Meaning                                                           |
 | --------------------- | ------------- | ----------------------------------------------------------------- |
@@ -80,11 +80,11 @@ end;
 
 ### 3. Public synonym (as `SYS`, optional)
 
-Following instructions are related to [Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Synonym.sql) file.
+Following instructions are related to [Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Synonym.sql) file.
 
 If you installed Oracle package as `SYS`, then you might want to create a public synonym so that consumers can use it as if it was a system package, without specifying user prefix on each call. This step basically creates a synonym and adds execute grant to a chosen user (not `SYS`, of course).
 
-[Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/Synonym.sql) file contains these parameters:
+[Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Synonym.sql) file contains these parameters:
 
 | Parameter name   | Default value | Meaning                                                 |
 | ---------------- | ------------- | ------------------------------------------------------- |
