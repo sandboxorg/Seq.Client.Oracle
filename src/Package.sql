@@ -76,7 +76,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   function version return varchar2 deterministic
   is
   begin
-    return '1.0.1';
+    return '1.1.0';
   end version;
 
   function base_url return varchar2 deterministic
@@ -273,8 +273,9 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     response utl_http.resp;
     source_context varchar(100);
     timestamp varchar2(100);
-    message_type varchar(3);
+    error_stack_trace varchar2(32767);
     event_props_json varchar2(32767);
+    message_type varchar(3);
     log_event varchar2(32767);
     buffer varchar2(32767);
   begin
@@ -282,7 +283,13 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     timestamp := to_char(systimestamp at time zone 'UTC', 'yyyy-mm-dd"T"hh24:mi:ss.ff3"Z"');
 
     event_props_json := ',' || escape_json('SourceContext') || ':' || source_context;
-    event_props_json := event_props_json || ',' || escape_json('LineNumber') || ':' || escape_json(to_char(line_number));
+    event_props_json := event_props_json || ',' || escape_json('LineNumber') || ':' || line_number;
+    
+    error_stack_trace := dbms_utility.format_error_stack;
+    if error_stack_trace is not null then
+      error_stack_trace := error_stack_trace || dbms_utility.format_error_backtrace;
+      event_props_json := event_props_json || ',' || escape_json('StackTrace') || ':' || escape_json(error_stack_trace);
+    end if;
 
     if event_props is not null and event_props.count > 0 
     then
