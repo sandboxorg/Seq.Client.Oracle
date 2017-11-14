@@ -76,7 +76,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   function version return varchar2 deterministic
   is
   begin
-    return '1.1.0';
+    return '1.1.1';
   end version;
 
   function base_url return varchar2 deterministic
@@ -107,6 +107,9 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   is
     esc varchar2(32767);  
   begin
+    if regexp_like(str, '^[[:digit:]]+$') then
+      return str;
+    end if;
     -- Start replacing all backslashes, to avoid replacing propers escapes.
     esc := regexp_replace(str, '\\', '\\\');
     -- Then, continue with other reserved characters.

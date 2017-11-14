@@ -1,5 +1,9 @@
 # Changelog for Seq.Client.Oracle
 
+## v1.1.1 (2017-11-15)
+
+* Integer property values are now sent as integers rather than strings.
+
 ## v1.1.0 (2017-11-14)
 
 * Line number is properly sent as an integer.
