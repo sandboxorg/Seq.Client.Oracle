@@ -1,4 +1,4 @@
-define ORACLE_USER = '???';  -- Set here the Oracle user who needs to send log events to Seq
+define ORACLE_USER = '???';  -- Set here the Oracle user who needs to send log events to Seq (UPPERCASE)
 define SEQ_HOST    = '???';  -- Set here the host name on which Seq is listening to
 define SEQ_PORT    = '5341'; -- Set here the port number on which Seq is listening to - Default is 5341
 

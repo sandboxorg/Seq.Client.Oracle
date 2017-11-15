@@ -14,11 +14,11 @@ Before installing (and customising) Oracle package, some commands need to be run
 
 [Setup.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Setup.sql) file contains these parameters:
 
-| Parameter name | Default value | Meaning                                          |
-| -------------- | ------------- | ------------------------------------------------ |
-| `ORACLE_USER`  |               | Oracle user who needs to send log events to Seq. |
-| `SEQ_HOST`     |               | Host name on which Seq is listening to.          |
-| `SEQ_PORT`     | 5341          | Port number on which Seq is listening to.        |
+| Parameter name | Default value | Meaning                                                      |
+| -------------- | ------------- | ------------------------------------------------------------ |
+| `ORACLE_USER`  |               | Oracle user who needs to send log events to Seq (UPPERCASE). |
+| `SEQ_HOST`     |               | Host name on which Seq is listening to.                      |
+| `SEQ_PORT`     | 5341          | Port number on which Seq is listening to.                    |
 
 `ORACLE_USER` can be set to `SYS` if you want to share package globally. If so, please remove grants at the beginning of the script and do not skip step 3, which must also be run as `SYS` user.
 
@@ -51,7 +51,7 @@ Following instructions are related to [Package.sql](https://github.com/finsaspa/
 
 | Parameter name        | Default value | Meaning                                                           |
 | --------------------- | ------------- | ----------------------------------------------------------------- |
-| `ORACLE_USER`         |               | Oracle user for whom package should be created.                   |
+| `ORACLE_USER`         |               | Oracle user for whom package should be created (UPPERCASE).       |
 | `ORACLE_PACKAGE`      | seq_log       | Oracle package name for Seq client.                               |
 | `SEQ_HOST`            |               | Host name on which Seq is listening to.                           |
 | `SEQ_PORT`            | 5341          | Port number on which Seq is listening to.                         |
@@ -86,10 +86,10 @@ If you installed Oracle package as `SYS`, then you might want to create a public
 
 [Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Synonym.sql) file contains these parameters:
 
-| Parameter name   | Default value | Meaning                                                 |
-| ---------------- | ------------- | ------------------------------------------------------- |
-| `ORACLE_USER`    |               | Oracle user, not SYS, from whom package should be used. |
-| `ORACLE_PACKAGE` | seq_log       | Oracle package name for Seq client.                     |
+| Parameter name   | Default value | Meaning                                                             |
+| ---------------- | ------------- | ------------------------------------------------------------------- |
+| `ORACLE_USER`    |               | Oracle user, not SYS, from whom package should be used (UPPERCASE). |
+| `ORACLE_PACKAGE` | seq_log       | Oracle package name for Seq client.                                 |
 
 ## About this repository and its maintainer
 

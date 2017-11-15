@@ -1,4 +1,4 @@
-define ORACLE_USER         = '???';     -- Set here the Oracle user for whom package should be created
+define ORACLE_USER         = '???';     -- Set here the Oracle user for whom package should be created (UPPERCASE)
 define ORACLE_PACKAGE      = 'seq_log'; -- Set here the Oracle package name for Seq client - Default is 'seq_log'
 define SEQ_HOST            = '???';     -- Set here the host name on which Seq is listening to
 define SEQ_PORT            = '5341';    -- Set here the port number on which Seq is listening to - Default is 5341
@@ -76,7 +76,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   function version return varchar2 deterministic
   is
   begin
-    return '1.1.1';
+    return '1.1.2';
   end version;
 
   function base_url return varchar2 deterministic
@@ -338,6 +338,12 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
       null; -- Do nothing when an error happens.
   end send_log_event;
 
+  procedure error_test
+  is
+  begin
+    raise_application_error(-20001, 'TEST ERROR');
+  end error_test;
+
   procedure self_test
   is
     test_log_level evt_prop;
@@ -346,35 +352,50 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     test_log_level.name := 'TestLogLevel';
     test_number.name := 'TestNumber';
   
+    -- Simple messages, one per log level.
+    verbose('Verbose test message from Seq client for Oracle');
+    debug('Debug test message from Seq client for Oracle');
+    information('Information test message from Seq client for Oracle');
+    warning('Warning test message from Seq client for Oracle');
+    error('Error test message from Seq client for Oracle');
+    fatal('Fatal test message from Seq client for Oracle');
+    
+    -- Messages with properties, one per log level.
     test_log_level.value := 'VERBOSE';
     test_number.value := '1';
-    verbose('Verbose test message from Seq client for Oracle');
     verbose('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
 
     test_log_level.value := 'DEBUG';
     test_number.value := '2';
-    debug('Debug test message from Seq client for Oracle');
     debug('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
 
     test_log_level.value := 'INFORMATION';
     test_number.value := '3';
-    information('Information test message from Seq client for Oracle');
     information('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
 
     test_log_level.value := 'WARNING';
     test_number.value := '4';
-    warning('Warning test message from Seq client for Oracle');
     warning('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
 
     test_log_level.value := 'ERROR';
     test_number.value := '5';
-    error('Error test message from Seq client for Oracle');
     error('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
 
     test_log_level.value := 'FATAL';
     test_number.value := '6';
-    fatal('Fatal test message from Seq client for Oracle');
     fatal('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
+  
+    begin
+      error_test();
+    exception
+      when others then
+        verbose('Verbose test message with StackTrace from Seq client for Oracle');
+        debug('Debug test message with StackTrace from Seq client for Oracle');
+        information('Information test message with StackTrace from Seq client for Oracle');
+        warning('Warning test message with StackTrace from Seq client for Oracle');
+        error('Error test message with StackTrace from Seq client for Oracle');
+        fatal('Fatal test message with StackTrace from Seq client for Oracle');
+    end;
   end self_test;
   
 end &ORACLE_PACKAGE;

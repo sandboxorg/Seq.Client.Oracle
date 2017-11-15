@@ -1,5 +1,10 @@
 # Changelog for Seq.Client.Oracle
 
+## v1.1.2 (2017-11-15)
+
+* Made it clear in the docs that ORACLE_USER should be UPPERCASE.
+* Added an error case to self_test procedure.
+
 ## v1.1.1 (2017-11-15)
 
 * Integer property values are now sent as integers rather than strings.
