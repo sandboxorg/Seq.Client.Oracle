@@ -76,7 +76,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   function version return varchar2 deterministic
   is
   begin
-    return '1.1.2';
+    return '1.1.3';
   end version;
 
   function base_url return varchar2 deterministic
@@ -291,7 +291,7 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     error_stack_trace := dbms_utility.format_error_stack;
     if error_stack_trace is not null then
       error_stack_trace := error_stack_trace || dbms_utility.format_error_backtrace;
-      event_props_json := event_props_json || ',' || escape_json('StackTrace') || ':' || escape_json(error_stack_trace);
+      event_props_json := event_props_json || ',' || escape_json('@x') || ':' || escape_json(error_stack_trace);
     end if;
 
     if event_props is not null and event_props.count > 0 

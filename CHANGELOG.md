@@ -1,5 +1,9 @@
 # Changelog for Seq.Client.Oracle
 
+## v1.1.3 (2017-11-19)
+
+* Using right property (@x) for error stack trace.
+
 ## v1.1.2 (2017-11-15)
 
 * Made it clear in the docs that ORACLE_USER should be UPPERCASE.
