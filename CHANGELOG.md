@@ -2,7 +2,7 @@
 
 ## v1.2.0 (2017-11-25)
 
-* Added procedure `set_context` to allow sharing event properties among log entries.
+* Added procedure `set_context` to allow sharing properties among log events.
 
 ## v1.1.3 (2017-11-19)
 
