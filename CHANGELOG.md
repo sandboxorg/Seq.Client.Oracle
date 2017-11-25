@@ -1,13 +1,17 @@
 # Changelog for Seq.Client.Oracle
 
+## v1.2.0 (2017-11-25)
+
+* Added procedure `set_context` to allow sharing event properties among log entries.
+
 ## v1.1.3 (2017-11-19)
 
-* Using right property (@x) for error stack trace.
+* Using right property (`@x`) for error stack trace.
 
 ## v1.1.2 (2017-11-15)
 
-* Made it clear in the docs that ORACLE_USER should be UPPERCASE.
-* Added an error case to self_test procedure.
+* Made it clear in the docs that `ORACLE_USER` should be UPPERCASE.
+* Added an error case to `self_test` procedure.
 
 ## v1.1.1 (2017-11-15)
 

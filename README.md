@@ -78,6 +78,16 @@ begin
 end;
 ```
 
+To share a given set of event properties among log entries, you can set (or unset) a context using `set_context` procedure:
+
+```sql
+begin
+  {ORACLE_USER}.{ORACLE_PACKAGE}.set_context({EVENT_PROPS});
+  -- Use log procedures here...
+  {ORACLE_USER}.{ORACLE_PACKAGE}.set_context(null);
+end;
+```
+
 ### 3. Public synonym (as `SYS`, optional)
 
 Following instructions are related to [Synonym.sql](https://github.com/finsaspa/Seq.Client.Oracle/blob/master/src/Synonym.sql) file.
@@ -95,7 +105,7 @@ If you installed Oracle package as `SYS`, then you might want to create a public
 
 Everything done on this repository is freely offered on the terms of the project license. You are free to do everything you want with the code and its related files, as long as you respect the license and use common sense while doing it :-)
 
-I maintain this project during my spare time, so I can offer limited assistance and I can offer **no kind of warranty**.
+I maintain this project during my spare time, so I can offer limited assistance and I can offer **no kind of warranty**. This project is an **unofficial client** for [Seq](https://getseq.net/) and I am in no way related to [Seq](https://getseq.net/) maintainers and developers (except that I really like their product, of course).
 
 However, if this project helps you, then you might offer me an hot cup of coffee:
 

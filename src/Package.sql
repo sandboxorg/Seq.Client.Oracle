@@ -27,6 +27,8 @@ create or replace package &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   procedure set_api_key(api_key in varchar2);
 
+  procedure set_context(context in evt_props);
+
   procedure verbose(message in varchar2);
 
   procedure verbose(message_template in varchar2,
@@ -72,11 +74,12 @@ end &ORACLE_PACKAGE;
 create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
 
   custom_api_key varchar2(100);
+  pushed_context evt_props;
 
   function version return varchar2 deterministic
   is
   begin
-    return '1.1.3';
+    return '1.2.0';
   end version;
 
   function base_url return varchar2 deterministic
@@ -125,7 +128,13 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
   begin
     custom_api_key := api_key;
   end set_api_key;
-  
+
+  procedure set_context(context evt_props)
+  is
+  begin
+    pushed_context := context;
+  end set_context;
+
   procedure verbose(message in varchar2)
   is
     owner varchar2(100);
@@ -272,16 +281,18 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
                            program_unit in varchar2,
                            line_number in number)
   is
-    request utl_http.req;
-    response utl_http.resp;
+    message_type varchar(3);
     source_context varchar(100);
     timestamp varchar2(100);
     error_stack_trace varchar2(32767);
+    event_prop_tmp evt_prop;
     event_props_json varchar2(32767);
-    message_type varchar(3);
     log_event varchar2(32767);
+    request utl_http.req;
+    response utl_http.resp;
     buffer varchar2(32767);
   begin
+    message_type := '@mt';
     source_context := escape_json(coalesce(lower(owner), 'anonymous') || '.' || coalesce(lower(program_unit), 'block'));
     timestamp := to_char(systimestamp at time zone 'UTC', 'yyyy-mm-dd"T"hh24:mi:ss.ff3"Z"');
 
@@ -294,15 +305,22 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
       event_props_json := event_props_json || ',' || escape_json('@x') || ':' || escape_json(error_stack_trace);
     end if;
 
+    if pushed_context is not null and pushed_context.count > 0 
+    then
+        for evp in 1 .. pushed_context.count
+        loop
+          event_prop_tmp := pushed_context(evp);
+          event_props_json := event_props_json || ',' || escape_json(event_prop_tmp.name) || ':' || escape_json(event_prop_tmp.value);
+        end loop;
+    end if;
+
     if event_props is not null and event_props.count > 0 
     then
-        message_type := '@mt';
-        for evp in 1 .. event_props.count 
+        for evp in 1 .. event_props.count
         loop
-          event_props_json := event_props_json || ',' || escape_json(event_props(evp).name) || ':' || escape_json(event_props(evp).value);
+          event_prop_tmp := event_props(evp);
+          event_props_json := event_props_json || ',' || escape_json(event_prop_tmp.name) || ':' || escape_json(event_prop_tmp.value);
         end loop;
-    else
-        message_type := '@m';
     end if;
   
     log_event := clef_template;
@@ -385,6 +403,22 @@ create or replace package body &ORACLE_USER&DOT&ORACLE_PACKAGE as
     test_number.value := '6';
     fatal('{TestLogLevel} test template message from Seq client for Oracle - {TestNumber}', evt_props(test_log_level, test_number));
   
+    -- Using context for sharing properties among log entries.    
+    test_log_level.value := 'SHARED';
+    test_number.value := '42';
+    set_context(evt_props(test_log_level, test_number));
+
+    verbose('{TestLogLevel} test context message from Seq client for Oracle - {TestNumber}');
+    debug('{TestLogLevel} test context message from Seq client for Oracle - {TestNumber}');
+    information('{TestLogLevel} test context message from Seq client for Oracle - {TestNumber}');
+    warning('{TestLogLevel} test context message from Seq client for Oracle - {TestNumber}');
+    error('{TestLogLevel} test context message from Seq client for Oracle - {TestNumber}');
+    fatal('{TestLogLevel} test context message from Seq client for Oracle - {TestNumber}');
+    
+    -- Clearing context.
+    set_context(null);
+
+    -- Logging Oracle error as an exception.
     begin
       error_test();
     exception
