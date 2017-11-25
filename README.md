@@ -78,7 +78,7 @@ begin
 end;
 ```
 
-To share a given set of event properties among log entries, you can set (or unset) a context using `set_context` procedure:
+To share a given set of properties among log events, you can set (or unset) a context using `set_context` procedure:
 
 ```sql
 begin
